@@ -62,10 +62,11 @@ impl file::Operations for RustFile {
     type Data = Arc<RustMiscdevData>;
     type OpenData = Arc<RustMiscdevData>;
 
-    fn open(_shared: &Arc<RustMiscdevData>, _file: &file::File) -> Result<Self::Data> {
+    fn open(shared: &Arc<RustMiscdevData>, _file: &file::File) -> Result<Self::Data> {
         pr_info!("open in miscdevice\n",);
-        //TODO
-        todo!()
+        
+        // Clone the shared data for this file
+        Ok(Arc::clone(shared))
     }
 
     fn read(
@@ -75,9 +76,14 @@ impl file::Operations for RustFile {
         _offset: u64,
     ) -> Result<usize> {
         pr_info!("read in miscdevice\n");
-        //TODO
-        todo!()
-        
+
+        let contents = &mut *_shared.inner.lock();
+        if _offset as usize > GLOBALMEM_SIZE {
+            return Ok(0);
+        }
+        let data = &contents[_offset as usize..];
+        _writer.write_slice(data)?;
+        Ok(data.len())
     }
 
     fn write(
@@ -87,9 +93,14 @@ impl file::Operations for RustFile {
         _offset: u64,
     ) -> Result<usize> {
         pr_info!("write in miscdevice\n");
-        //TODO
-        todo!()
 
+        let mut len = _reader.len();
+        if len > GLOBALMEM_SIZE {
+            len = GLOBALMEM_SIZE;
+        }
+        let contents = &mut *_shared.inner.lock();
+        _reader.read_slice(&mut contents[..len])?;
+        Ok(len)
     }
 
     fn release(_data: Self::Data, _file: &File) {
