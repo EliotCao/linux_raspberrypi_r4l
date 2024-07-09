@@ -124,6 +124,8 @@ config GPIO_IDIO_16
 menu "Memory mapped GPIO drivers"
 	depends on HAS_IOMEM
 
+source "drivers/gpio/exercise-3-gpio/Kconfig"
+
 config GPIO_74XX_MMIO
 	tristate "GPIO driver for 74xx-ICs with MMIO access"
 	depends on OF_GPIO
@@ -246,6 +248,15 @@ config GPIO_DAVINCI
 
 config GPIO_DWAPB
 	tristate "Synopsys DesignWare APB GPIO driver"
+	select GPIO_GENERIC
+	select GPIOLIB_IRQCHIP
+	help
+	  Say Y or M here to build support for the Synopsys DesignWare APB
+	  GPIO block.
+
+config GPIO_DWAPB_RUST
+	tristate "Synopsys DesignWare APB GPIO driver in Rust"
+	depends on RUST 
 	select GPIO_GENERIC
 	select GPIOLIB_IRQCHIP
 	help

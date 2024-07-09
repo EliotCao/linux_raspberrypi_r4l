@@ -45,6 +45,13 @@ pub mod file;
 pub mod fs;
 pub mod init;
 pub mod io_buffer;
+pub mod gpio;
+pub mod fwnode;
+pub mod io_mem;
+#[cfg(CONFIG_ARM_AMBA)]
+pub mod amba;
+#[cfg(CONFIG_IOMMU_IO_PGTABLE)]
+pub mod io_pgtable;
 pub mod ioctl;
 #[cfg(CONFIG_KUNIT)]
 pub mod kunit;
@@ -63,6 +70,9 @@ pub mod sync;
 pub mod task;
 pub mod types;
 pub mod user_ptr;
+pub mod completion;
+pub mod timekeeping;
+pub mod irq;
 
 #[doc(hidden)]
 pub use bindings;
